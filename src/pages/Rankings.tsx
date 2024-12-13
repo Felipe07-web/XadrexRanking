@@ -6,18 +6,22 @@ export default function Rankings() {
   const [players, setPlayers] = useState<Player[]>([]);
 
   const fetchPlayers = async () => {
-    const res = await fetch("http://localhost:3001/players");
-    const data = await res.json();
+    try {
+      const res = await fetch("https://xadrexranking.onrender.com/players");
+      const data = await res.json();
 
-    // Ordenar os jogadores pelo ranking (pontos)
-    const sortedPlayers = data.sort((a: Player, b: Player) => b.points - a.points);
-    setPlayers(sortedPlayers);
+      // Ordenar os jogadores pelo ranking (pontos)
+      const sortedPlayers = data.sort((a: Player, b: Player) => b.points - a.points);
+      setPlayers(sortedPlayers);
+    } catch (error) {
+      console.error("Erro ao buscar jogadores:", error);
+    }
   };
 
   const updatePlayerPoints = async (playerId: string, newPoints: number) => {
     try {
       // Atualizar no backend
-      await fetch(`http://localhost:3001/players/${playerId}`, {
+      await fetch(`https://xadrexranking.onrender.com/players/${playerId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ points: newPoints }),

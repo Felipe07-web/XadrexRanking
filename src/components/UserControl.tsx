@@ -9,7 +9,7 @@ export default function UserControl() {
   useEffect(() => {
     async function fetchPlayers() {
       try {
-        const response = await fetch('http://localhost:3001/players'); // Certifique-se de que a URL está correta.
+        const response = await fetch('https://xadrexranking.onrender.com/players'); // URL do JSON Server
         const data = await response.json();
         setPlayers(data);
       } catch (error) {
@@ -21,7 +21,7 @@ export default function UserControl() {
 
   const handleDeletePlayer = async (playerId: string) => {
     try {
-      await fetch(`http://localhost:3001/players/${playerId}`, {
+      await fetch(`https://xadrexranking.onrender.com/players/${playerId}`, {
         method: 'DELETE',
       });
       setPlayers((prevPlayers) => prevPlayers.filter((player) => player.id !== playerId));
@@ -37,7 +37,7 @@ export default function UserControl() {
 
   const handleSavePlayer = async (playerId: string) => {
     try {
-      await fetch(`http://localhost:3001/players/${playerId}`, {
+      await fetch(`https://xadrexranking.onrender.com/players/${playerId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

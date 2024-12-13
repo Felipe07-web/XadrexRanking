@@ -22,7 +22,7 @@ export default function Tournament() {
 
     async function fetchData() {
       try {
-        const playersResponse = await fetch('http://localhost:3001/players');
+        const playersResponse = await fetch('https://xadrexranking.onrender.com/players');
         const playersData = await playersResponse.json();
         setPlayers(playersData);
       } catch (error) {
