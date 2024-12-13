@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Player, Match } from '../types';
 import Confetti from 'react-confetti';
 
-
 export default function Tournament() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
@@ -10,6 +9,17 @@ export default function Tournament() {
   const [tournamentWinner, setTournamentWinner] = useState<Player | null>(null);
 
   useEffect(() => {
+    const savedMatches = localStorage.getItem('matches');
+    const savedTournamentWinner = localStorage.getItem('tournamentWinner');
+
+    if (savedMatches) {
+      setMatches(JSON.parse(savedMatches));
+    }
+
+    if (savedTournamentWinner) {
+      setTournamentWinner(JSON.parse(savedTournamentWinner));
+    }
+
     async function fetchData() {
       try {
         const playersResponse = await fetch('http://localhost:3001/players');
@@ -67,6 +77,8 @@ export default function Tournament() {
 
     setMatches(generatedMatches);
     setTournamentWinner(null);
+    localStorage.removeItem('matches');
+    localStorage.removeItem('tournamentWinner');
   };
 
   const handleSelectWinner = (matchId: string, winnerId: string) => {
@@ -82,6 +94,7 @@ export default function Tournament() {
       match.id === matchId ? { ...match, winnerId } : match
     );
     setMatches(updatedMatches);
+    localStorage.setItem('matches', JSON.stringify(updatedMatches));
     setSelectedWinner(null);
 
     const currentMatch = matches.find((match) => match.id === matchId);
@@ -92,6 +105,7 @@ export default function Tournament() {
       } else if (currentMatch.round === 'finals') {
         const winner = players.find((player) => player.id === winnerId);
         setTournamentWinner(winner || null);
+        localStorage.setItem('tournamentWinner', JSON.stringify(winner || null));
       }
     }
   };
@@ -137,20 +151,22 @@ export default function Tournament() {
 
   const resetTournament = () => {
     setMatches([]);
+    localStorage.removeItem('matches');
     setSelectedWinner(null);
     setTournamentWinner(null);
+    localStorage.removeItem('tournamentWinner');
   };
 
   const renderWinnerScreen = () => {
     if (!tournamentWinner) return null;
-  
+
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-800 to-blue-900 text-white relative">
         <Confetti recycle={false} numberOfPieces={500} />
         <h1 className="text-5xl font-extrabold mb-6">🏆 Torneio Finalizado!</h1>
         <div className="text-center flex flex-col items-center">
           <img
-            src={tournamentWinner.profileImage || '/placeholder.png'} 
+            src={tournamentWinner.profileImage || '/placeholder.png'}
             alt={tournamentWinner.username || 'Winner'}
             className="w-32 h-32 rounded-full border-4 border-white mb-4"
           />
@@ -166,12 +182,10 @@ export default function Tournament() {
       </div>
     );
   };
-  
+
   const renderRound = (round: string) => (
     <div className={`mb-8 ${round === 'finals' ? 'flex justify-center' : ''}`}>
-     {round !== 'finals' && (
-  <h2 className="text-center text-2xl font-bold capitalize mb-6 text-blue-700">{round.replace('-', ' ')}</h2>
-)}
+      {round !== 'finals' && <h2 className="text-center text-2xl font-bold capitalize mb-6 text-blue-700">{round.replace('-', ' ')}</h2>}
       <div className={`${round === 'finals' ? 'flex justify-center' : 'grid grid-cols-1 md:grid-cols-2'} gap-6`}>
         {matches
           .filter((match) => match.round === round)
@@ -220,6 +234,7 @@ export default function Tournament() {
       </div>
     </div>
   );
+
   return (
     <div className="bg-gray-900 text-white p-10 rounded-3xl shadow-2xl space-y-12">
       {tournamentWinner ? (

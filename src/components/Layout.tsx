@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { FaChessBoard, FaTrophy, FaUserPlus, FaUsers } from 'react-icons/fa';
+import { FaChessBoard, FaTrophy, FaUserPlus, FaUsers, FaUserCog } from 'react-icons/fa'; // Importa o ícone para o controle de usuários
 
 export default function Layout() {
   return (
@@ -24,6 +24,10 @@ export default function Layout() {
               <Link to="/register" className="flex items-center space-x-1 hover:text-blue-400">
                 <FaUserPlus className="h-5 w-5" />
                 <span>Registrar</span>
+              </Link>
+              <Link to="/user-control" className="flex items-center space-x-1 hover:text-blue-400">
+                <FaUserCog className="h-5 w-5" />
+                <span>Controle de Usuários</span>
               </Link>
             </div>
           </div>
